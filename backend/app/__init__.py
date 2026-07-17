@@ -4,4 +4,4 @@ app = FastAPI()
 
 @app.get("/")
 def read_root():
-    return {"status": "ok", "message": "TODO API is running"}
+    return {"status": "ok", "message": "TODO api is running"}
