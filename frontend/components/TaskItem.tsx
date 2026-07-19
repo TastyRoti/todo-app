@@ -14,7 +14,10 @@ interface TaskItemProps {
 
 export function TaskItem({ task, onToggleDone, onDelete }: TaskItemProps) {
   return (
-    <div className="flex items-center gap-3 p-3 border rounded-lg bg-white">
+    <div
+      data-testid={`task-item-${task.id}`}
+      className="flex items-center gap-3 p-3 border rounded-lg bg-white"
+    >
       <Checkbox
         checked={task.done}
         onCheckedChange={(checked) => onToggleDone(task.id, checked === true)}
