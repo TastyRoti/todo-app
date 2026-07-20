@@ -1,4 +1,4 @@
-import { Task, TaskCreate, TaskUpdate, StatusFilter, SortField, SortOrder } from "@/types/task";
+import { Task, TaskCreate, TaskUpdate, Category, StatusFilter, SortField, SortOrder } from "@/types/task";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
 
@@ -6,9 +6,12 @@ export async function getTasks(
   status: StatusFilter = "all",
   search: string = "",
   sort: SortField = "created_at",
-  order: SortOrder = "asc"
+  order: SortOrder = "asc",
+  categoryId?: number | null
 ): Promise<Task[]> {
   const params = new URLSearchParams({ status, search, sort, order });
+  if (categoryId) params.append("category_id", categoryId.toString());
+
   const res = await fetch(`${API_URL}/tasks/?${params}`);
   if (!res.ok) throw new Error("Failed to fetch tasks");
   return res.json();
@@ -37,4 +40,20 @@ export async function updateTask(id: number, update: TaskUpdate): Promise<Task> 
 export async function deleteTask(id: number): Promise<void> {
   const res = await fetch(`${API_URL}/tasks/${id}`, { method: "DELETE" });
   if (!res.ok) throw new Error("Failed to delete task");
+}
+
+export async function getCategories(): Promise<Category[]> {
+  const res = await fetch(`${API_URL}/categories/`);
+  if (!res.ok) throw new Error("Failed to fetch categories");
+  return res.json();
+}
+
+export async function createCategory(name: string): Promise<Category> {
+  const res = await fetch(`${API_URL}/categories/`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ name }),
+  });
+  if (!res.ok) throw new Error("Failed to create category");
+  return res.json();
 }

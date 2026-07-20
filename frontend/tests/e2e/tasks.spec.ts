@@ -47,3 +47,35 @@ test("can search for tasks", async ({ page }) => {
   await page.getByPlaceholder("Search tasks...").fill("NonExistentXYZ");
   await expect(page.getByText(uniqueTitle)).not.toBeVisible();
 });
+
+test("can create a task with a new category", async ({ page }) => {
+  const uniqueTitle = `Task with category ${Date.now()}`;
+  const uniqueCategory = `Category${Date.now()}`;
+
+  await page.getByPlaceholder("New task...").fill(uniqueTitle);
+
+  await page.getByTestId("category-select").click();
+  await page.getByTestId("new-category-input").fill(uniqueCategory);
+  await page.getByTestId("new-category-submit").click();
+
+  await page.getByRole("option", { name: uniqueCategory }).click();
+
+  await page.getByRole("button", { name: "Add" }).click();
+
+  const taskRow = page.getByTestId(new RegExp("task-item-")).filter({ hasText: uniqueTitle });
+  await expect(taskRow.getByText(uniqueCategory)).toBeVisible();
+});
+
+test("can set a due date on a task", async ({ page }) => {
+  const uniqueTitle = `Task with due date ${Date.now()}`;
+
+  await page.getByPlaceholder("New task...").fill(uniqueTitle);
+  await page.getByTestId("due-date-trigger").click();
+
+  await page.locator('[role="gridcell"] button').first().click();
+
+  await page.getByRole("button", { name: "Add" }).click();
+
+  const taskRow = page.getByTestId(new RegExp("task-item-")).filter({ hasText: uniqueTitle });
+  await expect(taskRow.locator("svg").first()).toBeVisible();
+});

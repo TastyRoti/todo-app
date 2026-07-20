@@ -3,7 +3,7 @@ from sqlalchemy import asc, desc
 from app import models, schemas
 
 
-def get_tasks(db: Session, status: str = "all", search: str = "", sort: str = "created_at", order: str = "asc"):
+def get_tasks(db: Session, status: str = "all", search: str = "", sort: str = "created_at", order: str = "asc", category_id: int = None):
     query = db.query(models.Task)
 
     if status == "done":
@@ -13,6 +13,9 @@ def get_tasks(db: Session, status: str = "all", search: str = "", sort: str = "c
 
     if search:
         query = query.filter(models.Task.title.ilike(f"%{search}%"))
+
+    if category_id is not None:
+        query = query.filter(models.Task.category_id == category_id)
 
     sort_column = getattr(models.Task, sort, models.Task.created_at)
     if order == "desc":
@@ -24,7 +27,12 @@ def get_tasks(db: Session, status: str = "all", search: str = "", sort: str = "c
 
 
 def create_task(db: Session, task: schemas.TaskCreate):
-    db_task = models.Task(title=task.title, priority=task.priority)
+    db_task = models.Task(
+        title=task.title,
+        priority=task.priority,
+        due_date=task.due_date,
+        category_id=task.category_id,
+    )
     db.add(db_task)
     db.commit()
     db.refresh(db_task)
@@ -57,3 +65,14 @@ def delete_task(db: Session, task_id: int):
     db.delete(db_task)
     db.commit()
     return db_task
+
+def get_categories(db: Session):
+    return db.query(models.Category).all()
+
+
+def create_category(db: Session, category: schemas.CategoryCreate):
+    db_category = models.Category(name=category.name)
+    db.add(db_category)
+    db.commit()
+    db.refresh(db_category)
+    return db_category

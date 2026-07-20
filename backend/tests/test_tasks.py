@@ -123,3 +123,57 @@ def test_priority_validation_rejects_out_of_range():
 def test_create_task_without_title_fails():
     response = client.post("/tasks/", json={"priority": 5})
     assert response.status_code == 422
+
+def test_create_category():
+    response = client.post("/categories/", json={"name": "Work"})
+    assert response.status_code == 201
+    data = response.json()
+    assert data["name"] == "Work"
+    assert "id" in data
+
+
+def test_get_categories():
+    client.post("/categories/", json={"name": "Work"})
+    client.post("/categories/", json={"name": "Personal"})
+
+    response = client.get("/categories/")
+    assert response.status_code == 200
+    data = response.json()
+    assert len(data) == 2
+
+
+def test_create_task_with_category():
+    category_response = client.post("/categories/", json={"name": "Work"})
+    category_id = category_response.json()["id"]
+
+    task_response = client.post("/tasks/", json={"title": "Finish report", "category_id": category_id})
+    assert task_response.status_code == 201
+    data = task_response.json()
+    assert data["category"]["name"] == "Work"
+    assert data["category"]["id"] == category_id
+
+
+def test_filter_tasks_by_category():
+    cat1 = client.post("/categories/", json={"name": "Work"}).json()
+    cat2 = client.post("/categories/", json={"name": "Personal"}).json()
+
+    client.post("/tasks/", json={"title": "Work task", "category_id": cat1["id"]})
+    client.post("/tasks/", json={"title": "Personal task", "category_id": cat2["id"]})
+
+    response = client.get(f"/tasks/?category_id={cat1['id']}")
+    data = response.json()
+    assert len(data) == 1
+    assert data[0]["title"] == "Work task"
+
+
+def test_create_task_with_due_date():
+    response = client.post("/tasks/", json={"title": "Deadline task", "due_date": "2026-08-01T12:00:00"})
+    assert response.status_code == 201
+    data = response.json()
+    assert data["due_date"] is not None
+
+
+def test_create_task_without_category_has_null_category():
+    response = client.post("/tasks/", json={"title": "No category task"})
+    data = response.json()
+    assert data["category"] is None

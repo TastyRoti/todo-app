@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from app.database import engine, Base
 from app import models
-from app.routers import tasks
+from app.routers import tasks, categories
 from fastapi.middleware.cors import CORSMiddleware
 
 
@@ -19,7 +19,7 @@ app.add_middleware(
 )
 
 app.include_router(tasks.router)
-
+app.include_router(categories.router)
 
 @app.get("/")
 def read_root():
