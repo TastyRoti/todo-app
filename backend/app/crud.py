@@ -76,3 +76,13 @@ def create_category(db: Session, category: schemas.CategoryCreate):
     db.commit()
     db.refresh(db_category)
     return db_category
+
+def delete_category(db: Session, category_id: int):
+    db_category = db.query(models.Category).filter(models.Category.id == category_id).first()
+    if db_category is None:
+        return None
+
+    db.query(models.Task).filter(models.Task.category_id == category_id).update({"category_id": None})
+    db.delete(db_category)
+    db.commit()
+    return db_category

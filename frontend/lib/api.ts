@@ -57,3 +57,8 @@ export async function createCategory(name: string): Promise<Category> {
   if (!res.ok) throw new Error("Failed to create category");
   return res.json();
 }
+
+export async function deleteCategory(id: number): Promise<void> {
+  const res = await fetch(`${API_URL}/categories/${id}`, { method: "DELETE" });
+  if (!res.ok) throw new Error("Failed to delete category");
+}
