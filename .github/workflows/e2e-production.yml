@@ -1,0 +1,31 @@
+name: E2E Tests Against Production
+
+on:
+  workflow_dispatch:
+
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: npm ci
+
+      - name: Install Playwright browsers
+        working-directory: frontend
+        run: npx playwright install --with-deps
+
+      - name: Run Playwright tests against production
+        working-directory: frontend
+        env:
+          PLAYWRIGHT_TEST_BASE_URL: https://todo-app-psi-eight-14.vercel.app
+        run: npx playwright test
