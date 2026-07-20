@@ -21,6 +21,9 @@ interface TaskFormProps {
   onAdd: (title: string, priority: number, categoryId: number | null, dueDate: string | null) => void;
 }
 
+const controlClass =
+  "box-border h-9 min-h-9 max-h-9 rounded-lg border border-zinc-700 bg-zinc-900 py-0 text-sm leading-none text-zinc-100 shadow-none focus-visible:border-orange-500 focus-visible:ring-orange-500/20";
+
 export function TaskForm({ onAdd }: TaskFormProps) {
   const [title, setTitle] = useState("");
   const [priority, setPriority] = useState("1");
@@ -57,74 +60,92 @@ export function TaskForm({ onAdd }: TaskFormProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-wrap gap-2">
+    <form onSubmit={handleSubmit} className="flex flex-col gap-3">
       <Input
         placeholder="New task..."
         value={title}
         onChange={(e) => setTitle(e.target.value)}
-        className="flex-1 min-w-[150px]"
+        className={`${controlClass} h-10 min-h-10 max-h-10 text-base placeholder:text-zinc-600`}
       />
 
-      <Select value={priority} onValueChange={setPriority}>
-        <SelectTrigger className="w-24" data-testid="priority-select">
-          <SelectValue />
-        </SelectTrigger>
-        <SelectContent>
-          {Array.from({ length: 10 }, (_, i) => i + 1).map((n) => (
-            <SelectItem key={n} value={n.toString()}>
-              {n}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
+      <div className="flex flex-wrap items-end gap-2">
+        <div className="flex flex-col gap-1">
+          <span className="text-[10px] font-semibold uppercase tracking-widest text-zinc-500">
+            Priority
+          </span>
+          <Select value={priority} onValueChange={setPriority}>
+            <SelectTrigger className={`${controlClass} w-20 data-[size=default]:!h-9`} data-testid="priority-select">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent className="border-zinc-700 bg-zinc-900 text-zinc-100">
+              {Array.from({ length: 10 }, (_, i) => i + 1).map((n) => (
+                <SelectItem key={n} value={n.toString()}>
+                  {n}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
 
-      <Select value={categoryId} onValueChange={setCategoryId}>
-        <SelectTrigger className="w-36" data-testid="category-select">
-          <SelectValue placeholder="Category" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="none">No category</SelectItem>
-          {categories.map((cat) => (
-            <SelectItem key={cat.id} value={cat.id.toString()}>
-              {cat.name}
-            </SelectItem>
-          ))}
-          <div className="flex gap-1 p-2 border-t">
-            <Input
-              placeholder="New category"
-              value={newCategoryName}
-              onChange={(e) => setNewCategoryName(e.target.value)}
-              className="h-8 text-sm"
-              onClick={(e) => e.stopPropagation()}
-              data-testid="new-category-input"
-            />
+        <Select value={categoryId} onValueChange={setCategoryId}>
+          <SelectTrigger className={`${controlClass} w-36 data-[size=default]:!h-9`} data-testid="category-select">
+            <SelectValue placeholder="Category" />
+          </SelectTrigger>
+          <SelectContent className="border-zinc-700 bg-zinc-900 text-zinc-100">
+            <SelectItem value="none">No category</SelectItem>
+            {categories.map((cat) => (
+              <SelectItem key={cat.id} value={cat.id.toString()}>
+                {cat.name}
+              </SelectItem>
+            ))}
+            <div className="flex gap-1 border-t border-zinc-800 p-2">
+              <Input
+                placeholder="New category"
+                value={newCategoryName}
+                onChange={(e) => setNewCategoryName(e.target.value)}
+                className={`${controlClass} text-sm placeholder:text-zinc-600`}
+                onClick={(e) => e.stopPropagation()}
+                data-testid="new-category-input"
+              />
+              <Button
+                type="button"
+                size="lg"
+                onClick={handleCreateCategory}
+                className={`${controlClass} bg-orange-500 px-2.5 text-zinc-950 hover:bg-orange-400`}
+                data-testid="new-category-submit"
+              >
+                +
+              </Button>
+            </div>
+          </SelectContent>
+        </Select>
+
+        <Popover>
+          <PopoverTrigger asChild>
             <Button
+              variant="outline"
               type="button"
-              size="sm"
-              onClick={handleCreateCategory}
-              className="h-8"
-              data-testid="new-category-submit"
-
+              size="lg"
+              className={`${controlClass} w-40 justify-start px-2.5 font-normal hover:bg-zinc-800 hover:text-zinc-100`}
+              data-testid="due-date-trigger"
             >
-              +
+              <CalendarIcon className="mr-2 size-4 text-orange-400" />
+              {dueDate ? format(dueDate, "PP") : "Due date"}
             </Button>
-          </div>
-        </SelectContent>
-      </Select>
+          </PopoverTrigger>
+          <PopoverContent className="w-auto border-zinc-700 bg-zinc-900 p-0 text-zinc-100">
+            <Calendar mode="single" selected={dueDate} onSelect={setDueDate} />
+          </PopoverContent>
+        </Popover>
 
-      <Popover>
-        <PopoverTrigger asChild>
-          <Button variant="outline" type="button" className="w-40 justify-start" data-testid="due-date-trigger">
-            <CalendarIcon className="mr-2 h-4 w-4" />
-            {dueDate ? format(dueDate, "PP") : "Due date"}
-          </Button>
-        </PopoverTrigger>
-        <PopoverContent className="w-auto p-0">
-          <Calendar mode="single" selected={dueDate} onSelect={setDueDate} />
-        </PopoverContent>
-      </Popover>
-
-      <Button type="submit">Add</Button>
+        <Button
+          type="submit"
+          size="lg"
+          className={`${controlClass} px-5 font-semibold bg-orange-500 text-zinc-950 hover:bg-orange-400`}
+        >
+          Add
+        </Button>
+      </div>
     </form>
   );
 }
