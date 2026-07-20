@@ -24,10 +24,10 @@ export default function Home() {
     loadTasks();
   }, [loadTasks]);
 
-  async function handleAdd(title: string, priority: number) {
-    await createTask({ title, priority });
-    loadTasks();
-  }
+  async function handleAdd(title: string, priority: number, categoryId: number | null, dueDate: string | null) {
+  await createTask({ title, priority, category_id: categoryId, due_date: dueDate });
+  loadTasks();
+}
 
   async function handleToggleDone(id: number, done: boolean) {
     await updateTask(id, { done });
