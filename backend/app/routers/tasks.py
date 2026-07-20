@@ -14,9 +14,10 @@ def read_tasks(
     search: str = "",
     sort: str = "created_at",
     order: str = "asc",
+    category_id: int = None,
     db: Session = Depends(get_db),
 ):
-    return crud.get_tasks(db, status=status, search=search, sort=sort, order=order)
+    return crud.get_tasks(db, status=status, search=search, sort=sort, order=order, category_id=category_id)
 
 
 @router.post("/", response_model=schemas.TaskOut, status_code=201)
