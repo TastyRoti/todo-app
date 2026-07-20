@@ -21,8 +21,8 @@ interface TaskFormProps {
   onAdd: (title: string, priority: number, categoryId: number | null, dueDate: string | null) => void;
 }
 
-const fieldClass =
-  "h-9 border-zinc-700 bg-zinc-900 text-zinc-100 shadow-none focus-visible:border-orange-500 focus-visible:ring-orange-500/20";
+const controlClass =
+  "box-border h-9 min-h-9 max-h-9 rounded-lg border border-zinc-700 bg-zinc-900 py-0 text-sm leading-none text-zinc-100 shadow-none focus-visible:border-orange-500 focus-visible:ring-orange-500/20";
 
 export function TaskForm({ onAdd }: TaskFormProps) {
   const [title, setTitle] = useState("");
@@ -65,25 +65,30 @@ export function TaskForm({ onAdd }: TaskFormProps) {
         placeholder="New task..."
         value={title}
         onChange={(e) => setTitle(e.target.value)}
-        className={`${fieldClass} h-10 text-base placeholder:text-zinc-600`}
+        className={`${controlClass} h-10 min-h-10 max-h-10 text-base placeholder:text-zinc-600`}
       />
 
-      <div className="flex flex-wrap gap-2">
-        <Select value={priority} onValueChange={setPriority}>
-          <SelectTrigger className={`${fieldClass} w-20`} data-testid="priority-select">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent className="border-zinc-700 bg-zinc-900 text-zinc-100">
-            {Array.from({ length: 10 }, (_, i) => i + 1).map((n) => (
-              <SelectItem key={n} value={n.toString()}>
-                {n}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+      <div className="flex flex-wrap items-end gap-2">
+        <div className="flex flex-col gap-1">
+          <span className="text-[10px] font-semibold uppercase tracking-widest text-zinc-500">
+            Priority
+          </span>
+          <Select value={priority} onValueChange={setPriority}>
+            <SelectTrigger className={`${controlClass} w-20 data-[size=default]:!h-9`} data-testid="priority-select">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent className="border-zinc-700 bg-zinc-900 text-zinc-100">
+              {Array.from({ length: 10 }, (_, i) => i + 1).map((n) => (
+                <SelectItem key={n} value={n.toString()}>
+                  {n}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
 
         <Select value={categoryId} onValueChange={setCategoryId}>
-          <SelectTrigger className={`${fieldClass} w-36`} data-testid="category-select">
+          <SelectTrigger className={`${controlClass} w-36 data-[size=default]:!h-9`} data-testid="category-select">
             <SelectValue placeholder="Category" />
           </SelectTrigger>
           <SelectContent className="border-zinc-700 bg-zinc-900 text-zinc-100">
@@ -98,15 +103,15 @@ export function TaskForm({ onAdd }: TaskFormProps) {
                 placeholder="New category"
                 value={newCategoryName}
                 onChange={(e) => setNewCategoryName(e.target.value)}
-                className={`${fieldClass} h-8 text-sm placeholder:text-zinc-600`}
+                className={`${controlClass} text-sm placeholder:text-zinc-600`}
                 onClick={(e) => e.stopPropagation()}
                 data-testid="new-category-input"
               />
               <Button
                 type="button"
-                size="sm"
+                size="lg"
                 onClick={handleCreateCategory}
-                className="h-8 bg-orange-500 text-zinc-950 hover:bg-orange-400"
+                className={`${controlClass} bg-orange-500 px-2.5 text-zinc-950 hover:bg-orange-400`}
                 data-testid="new-category-submit"
               >
                 +
@@ -120,7 +125,8 @@ export function TaskForm({ onAdd }: TaskFormProps) {
             <Button
               variant="outline"
               type="button"
-              className={`${fieldClass} w-40 justify-start font-normal hover:bg-zinc-800 hover:text-zinc-100`}
+              size="lg"
+              className={`${controlClass} w-40 justify-start px-2.5 font-normal hover:bg-zinc-800 hover:text-zinc-100`}
               data-testid="due-date-trigger"
             >
               <CalendarIcon className="mr-2 size-4 text-orange-400" />
@@ -134,7 +140,8 @@ export function TaskForm({ onAdd }: TaskFormProps) {
 
         <Button
           type="submit"
-          className="h-9 bg-orange-500 px-5 font-semibold text-zinc-950 hover:bg-orange-400"
+          size="lg"
+          className={`${controlClass} px-5 font-semibold bg-orange-500 text-zinc-950 hover:bg-orange-400`}
         >
           Add
         </Button>

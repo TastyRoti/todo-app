@@ -1,6 +1,7 @@
 "use client";
 
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
@@ -9,7 +10,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { StatusFilter, SortField, SortOrder } from "@/types/task";
-import { Search } from "lucide-react";
+import { ArrowDown, ArrowUp, Search } from "lucide-react";
 
 interface FilterBarProps {
   search: string;
@@ -22,8 +23,8 @@ interface FilterBarProps {
   onOrderChange: (value: SortOrder) => void;
 }
 
-const fieldClass =
-  "h-9 border-zinc-700 bg-zinc-900 text-zinc-100 shadow-none focus-visible:border-orange-500 focus-visible:ring-orange-500/20";
+const controlClass =
+  "box-border h-9 min-h-9 max-h-9 rounded-lg border border-zinc-700 bg-zinc-900 py-0 text-sm leading-none text-zinc-100 shadow-none focus-visible:border-orange-500 focus-visible:ring-orange-500/20";
 
 export function FilterBar({
   search,
@@ -35,6 +36,10 @@ export function FilterBar({
   order,
   onOrderChange,
 }: FilterBarProps) {
+  function toggleOrder() {
+    onOrderChange(order === "asc" ? "desc" : "asc");
+  }
+
   return (
     <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
       <div className="relative flex-1">
@@ -43,13 +48,13 @@ export function FilterBar({
           placeholder="Search tasks..."
           value={search}
           onChange={(e) => onSearchChange(e.target.value)}
-          className={`${fieldClass} pl-9 placeholder:text-zinc-600`}
+          className={`${controlClass} pl-9 placeholder:text-zinc-600`}
         />
       </div>
 
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap items-center gap-2">
         <Select value={status} onValueChange={(v) => onStatusChange(v as StatusFilter)}>
-          <SelectTrigger className={`${fieldClass} w-full min-w-[7rem] sm:w-28`}>
+          <SelectTrigger className={`${controlClass} w-full min-w-[7rem] data-[size=default]:!h-9 sm:w-28`}>
             <SelectValue />
           </SelectTrigger>
           <SelectContent className="border-zinc-700 bg-zinc-900 text-zinc-100">
@@ -60,7 +65,7 @@ export function FilterBar({
         </Select>
 
         <Select value={sort} onValueChange={(v) => onSortChange(v as SortField)}>
-          <SelectTrigger className={`${fieldClass} w-full min-w-[9rem] sm:w-36`}>
+          <SelectTrigger className={`${controlClass} w-full min-w-[9rem] data-[size=default]:!h-9 sm:w-36`}>
             <SelectValue />
           </SelectTrigger>
           <SelectContent className="border-zinc-700 bg-zinc-900 text-zinc-100">
@@ -69,15 +74,27 @@ export function FilterBar({
           </SelectContent>
         </Select>
 
-        <Select value={order} onValueChange={(v) => onOrderChange(v as SortOrder)}>
-          <SelectTrigger className={`${fieldClass} w-full min-w-[8rem] sm:w-32`}>
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent className="border-zinc-700 bg-zinc-900 text-zinc-100">
-            <SelectItem value="asc">Ascending</SelectItem>
-            <SelectItem value="desc">Descending</SelectItem>
-          </SelectContent>
-        </Select>
+        <Button
+          type="button"
+          variant="outline"
+          size="lg"
+          onClick={toggleOrder}
+          aria-label={order === "asc" ? "Sort ascending" : "Sort descending"}
+          title={order === "asc" ? "Ascending — click to switch" : "Descending — click to switch"}
+          className={`${controlClass} gap-1.5 px-2.5 font-normal hover:bg-zinc-800 hover:text-zinc-100`}
+        >
+          {order === "asc" ? (
+            <>
+              <ArrowUp className="size-4 text-orange-400" />
+              <span className="text-zinc-400">Asc</span>
+            </>
+          ) : (
+            <>
+              <ArrowDown className="size-4 text-orange-400" />
+              <span className="text-zinc-400">Desc</span>
+            </>
+          )}
+        </Button>
       </div>
     </div>
   );
