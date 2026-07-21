@@ -5,7 +5,7 @@ Todo web application for junior full-stack developer test task for Automaze done
 **Live demo:** https://todo-app-psi-eight-14.vercel.app
 
 **Backend API:** https://todo-backend-6jsa.onrender.com/docs
-
+Make sure that backend api is running in the first place, then visit live demo url, because it may shutdown after it's been inactive for some time due to Render's free subscription plan.
 ## Features
 
 - Display, add, and remove tasks
